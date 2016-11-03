@@ -1,0 +1,202 @@
+<html>
+<head>
+	<title>Picture Memory Game</title>
+	<meta charset="utf8">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			font: 18px Verdana;
+			color: #FFF;
+		  	background: #EE872A;
+		}
+		#picbox {
+			margin: 0px auto;
+			width: 640px;
+		}
+		#boxcard {
+			z-index: 1;
+			margin: 10px 0 0;
+		}
+		#boxcard div{
+			float: left;
+			width: 100px;
+			height: 100px;
+			margin: 5px;
+			padding: 5px;
+		  	background: #B1B1B1;
+			z-index: 2;
+		}
+		#boxbuttons {
+			text-align: center;
+			margin: 20px;
+			display: block;
+		}
+		#boxbuttons .button {
+			text-transform: uppercase;
+			background: #EE872A;
+			padding: 5px 10px;
+			margin: 5px;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+		#boxbuttons .button:hover {
+			background: #999;
+		}
+	</style>
+
+	<script src="https://code.jquery.com/jquery.min.js"></script>
+
+	<script>
+		var Counter = 0;
+		var ImgFound = 0;
+		
+		var Source = "#boxcard";
+
+		var State = {
+			flipped: "flipped",
+			opend: "opened",
+			matched: "matched"
+		};
+		
+		var imgSource = [
+		  "https://tv.pstatic.net/thm?size=225x150&quality=9&q=http://sstatic.naver.net/people/portraitGroup/201610/20161015005526670-7938858.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/79/201610212328132231.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/80/20161021232901271.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/81/201610212329388401.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/82/20161021233023331.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/83/201610212331037461.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/84/201610212331402551.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/85/201610212332229201.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/86/201610212333054051.jpg",
+		  "https://tv.pstatic.net/thm?size=120x150&quality=9&q=http://sstatic.naver.net/people/87/201610212333489291.jpg"
+		];
+
+		var CardSet = [];
+		function Card(i) {
+			this.img = imgSource[i];
+			this.state = State.flipped;
+			this.eq = function (that) {
+				return this.img === that.img;
+			}
+		}
+
+		function shuffleCards() {
+    		for (let i = CardSet.length; i; i--) {
+        		let j = Math.floor(Math.random() * i);
+        		[CardSet[i - 1], CardSet[j]] = [CardSet[j], CardSet[i - 1]];
+    		}
+		}
+
+		function flip(i) {
+			return function() {
+				var card = CardSet[i];
+				if (card.state === State.flipped) {
+					Counter++;
+					card.state = State.opened;
+				} else if (card.state === State.opened) {
+					Counter++;
+					card.state = State.flipped;
+				} else if (card.state == State.matched) {
+					// Nothing
+				}
+				renderCardSet();
+				matching();
+			}
+		}
+
+		function matching() {
+			var matchingCard = [];
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				if (card.state === State.opened) {
+					matchingCard.push(card);
+				}
+			}
+
+			if (matchingCard.length > 2) {
+				for (var i = 0; i < matchingCard.length; i++) {
+					matchingCard[i].state = State.flipped;
+				}
+			} else if (matchingCard.length > 1) {
+				var card1 = matchingCard[0];
+				var card2 = matchingCard[1];
+				if (card1.eq(card2)) {
+					card1.state = State.matched;
+					card2.state = State.matched;
+					renderCardSet();
+				} else {
+					card1.state = State.flipped;
+					card2.state = State.flipped;
+				}
+			}
+		}
+
+		function renderCardSet() {
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				if (card.state === State.flipped) {
+					$("#" + card.id).css("opacity", "1") ;
+					$("#" + card.id).css("background", "#B1B1B1");
+				} else if (card.state === State.opened) {
+					$("#" + card.id).css("opacity", "1") ;
+					$("#" + card.id).css("background", "url(" + card.img + ") no-repeat center top");
+				} else if (card.state === State.matched) {
+					$("#" + card.id).css("opacity", "0.7") ;
+				}
+			}
+			$("#counter").html("" + Counter);
+		}
+		
+		function resetGame() {
+			shuffleCards();
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				card.id = "card" + i;
+				card.state = State.flipped;
+			}
+			renderCardSet();
+			Counter = 0;
+			return false;
+		}
+
+		function init() {	
+			for (var y = 1; y < 3 ; y++) {
+				$.each(imgSource, function(i, val) {
+					var card = new Card(i);
+					CardSet.push(card);
+				});
+			}
+			shuffleCards();
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				card.id = "card" + i;
+				$(Source).append("<div id=" + card.id + "/>");
+				$("#" + card.id).click(flip(i));
+			}
+		}
+
+		$(document).ready(init);
+	</script>
+
+</head>
+
+<body>
+
+<div id="picbox">
+  <span id="boxbuttons">
+    <span class="button">
+      <span id="counter">0</span>
+      Flips
+    </span>
+    <span class="button">
+      <a onclick="resetGame();">Reset</a>
+    </span> 
+  </span>
+  <div id="boxcard"></div>
+</div>
+
+</body>
+</html>
