@@ -1,0 +1,204 @@
+<html>
+<head>
+	<title>Sliding Puzzle</title>
+	<meta charset="utf8">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			font: 18px Verdana;
+			color: #FFF;
+		  	background: #EE872A;
+		}
+		#puzzlebox {
+			margin: 0px auto;
+			width: 530px;
+		}
+		#cards {
+			z-index: 1;
+			margin: 10px 0 0;
+		}
+		#cards div{
+			text-align: center;
+    		display: flex;
+    		justify-content: center;
+    		flex-direction: column;
+			float: left;
+			width: 100px;
+			height: 100px;
+			margin: 5px;
+			padding: 5px;
+		  	background: #B1B1B1;
+			z-index: 2;
+		}
+		#status {
+			text-align: center;
+			margin: 20px;
+			display: block;
+		}
+		#status .button {
+			text-transform: uppercase;
+			background: #EE872A;
+			padding: 5px 10px;
+			margin: 5px;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+		#status .button:hover {
+			background: #999;
+		}
+	</style>
+
+	<script src="https://code.jquery.com/jquery.min.js"></script>
+
+	<script>
+		var Counter = 0;
+		var ImgFound = 0;
+		
+		var Source = "#cards";
+
+		var CardSet = [];
+		function Card(i) {
+			this.value = i + 1;
+			this.place = i;
+			this.row = function () { 
+				if (this.place === undefined) {
+					return -1;
+				} else {
+					return Math.floor(this.place / 4);
+				}
+			}
+			this.col = function () { 
+				if (this.place === undefined) {
+					return -1;
+				} else {
+					return this.place % 4;
+				}
+			}
+		}
+
+		function shuffleCards() {
+    		for (var i = 10 * CardSet.length; i; i--) {
+        		var j = Math.floor(Math.random() * CardSet.length);
+				slideCardAt(j);
+				renderCardSet();
+			}
+		}
+
+		function getCardAt(j) {
+			for (var i = 0; i < CardSet.length; i++) {
+				if (CardSet[i].place === j) return CardSet[i];
+			}
+			return undefined;
+		}
+
+		function getHole() {
+			for (var i = 0; i < CardSet.length; i++) {
+				if (CardSet[i].value === 16) return CardSet[i];
+			}
+			return undefined;
+		}
+
+		function slideCardAt(i) {
+			var card = getCardAt(i);
+			var hole = getHole();
+			var crow = card.row();
+			var ccol = card.col();
+			var hrow = hole.row();
+			var hcol = hole.col();
+
+			if ((crow === hrow) && (ccol < hcol)) {
+				for (let j = hcol - 1; j >= ccol; j--) {
+					var moving = getCardAt(crow * 4 + j);
+					moving.place = crow * 4 + j + 1;
+				}
+				hole.place = crow * 4 + ccol;
+			} else if ((crow === hrow) && (ccol > hcol)) {
+				for (let j = hcol + 1; j <= ccol; j++) {
+					var moving = getCardAt(crow * 4 + j);
+					moving.place = crow * 4 + j - 1;
+				}
+				hole.place = crow * 4 + ccol;
+			} else if ((crow < hrow) && (ccol === hcol)) {
+				for (let j = hrow - 1; j >= crow; j--) {
+					var moving = getCardAt(j * 4 + ccol);
+					moving.place = (j + 1) * 4 + ccol;
+				}
+				hole.place = crow * 4 + ccol;
+			} else if ((crow > hrow) && (ccol === hcol)) {
+				for (let j = hrow + 1; j <= crow; j++) {
+					var moving = getCardAt(j * 4 + ccol);
+					moving.place = (j - 1) * 4 + ccol;
+				}
+				hole.place = crow * 4 + ccol;
+			}
+		}
+
+		function slide(i) {
+			return function() {
+				Counter++;
+				slideCardAt(i);
+				renderCardSet();
+			}
+		}
+
+		function renderCardSet() {
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				if (card.value === 16) {
+					$("#card" + card.place).css("background", "#EE872A");
+					$("#card" + card.place).text("");
+				} else {
+					$("#card" + card.place).css("background", "#B1B1B1");
+					$("#card" + card.place).text("" + card.value);
+				}
+			}
+			$("#counter").html("" + Counter);
+		}
+
+		
+		function resetGame() {
+			shuffleCards();
+			renderCardSet();
+			Counter = 0;
+			return false;
+		}
+
+		function init() {	
+			for (var i = 0; i < 16 ; i++) {
+				var card = new Card(i);
+				CardSet.push(card);
+			}
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				$(Source).append("<div id=card" + card.place + "/>");
+				$("#card" + card.place).click(slide(i));
+			}
+			shuffleCards();
+			renderCardSet();
+		}
+
+		$(document).ready(init);
+	</script>
+
+</head>
+
+<body>
+
+<div id="puzzlebox">
+  <span id="status">
+    <span class="button">
+      <span id="counter">0</span>
+      Slides
+    </span>
+    <span class="button">
+      <a onclick="resetGame();">Reset</a>
+    </span> 
+  </span>
+  <div id="cards"></div>
+</div>
+
+</body>
+</html>
