@@ -1,0 +1,179 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery.min.js"></script>
+
+	<title>M&K</title>
+	<meta charset="utf8">
+	<style>
+	.background {
+		background:antiquewhite;
+		width:100%;
+		height:100%;		
+	}
+	.tom {
+		width: 40px;
+		position:fixed; 
+		left:80%; 
+		top:80%;
+	}
+	.jerry {
+		width: 120px;
+		position:fixed; 
+		left:10%; 
+		top:10%
+	}
+	.trap {
+		width: 80px;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="background"> 
+		<img src="C:\Users\M01-01\Desktop\jerry.png" class="tom"> </img>
+		<img src="C:\Users\M01-01\Desktop\tom.png" class="jerry"> </img>
+
+		<img style="position:fixed; left:17%; top:59%" src="C:\Users\M01-01\Desktop\trap.png" class="trap" id="trap1"> </img>
+		<img style="position:fixed; left:37%; top:45%" src="C:\Users\M01-01\Desktop\trap.png" class="trap" id="trap2"> </img>
+		<img style="position:fixed; left:26%; top:32%" src="C:\Users\M01-01\Desktop\trap.png" class="trap" id="trap3"> </img>
+		<img style="position:fixed; left:69%; top:19%" src="C:\Users\M01-01\Desktop\trap.png" class="trap" id="trap4"> </img>
+		<img style="position:fixed; left:45%; top:74%" src="C:\Users\M01-01\Desktop\trap.png" class="trap" id="trap5"> </img>
+	</div>
+	<script>
+	var tomX,tomY,jerryX,jerryY,maxX,maxY;
+	var v_tom=70,v_jerry=20,threshold=4000;
+	var dirX=[-1,0,1,0,0], dirY=[0,1,0,-1,0];
+	var gameTime=0, delay = 0;
+	$(document).ready(function(){
+		////////
+		//INIT//
+		////////
+		tomX=parseFloat($(".tom").css('left'));
+		tomY=parseFloat($(".tom").css('top'));
+		jerryX=parseFloat($(".jerry").css('left'));
+		jerryY=parseFloat($(".jerry").css('top'));
+		tx=[parseFloat($("#trap1").css('left')),parseFloat($("#trap2").css('left')),parseFloat($("#trap3").css('left')),parseFloat($("#trap4").css('left')),parseFloat($("#trap5").css('left'))];
+		ty=[parseFloat($("#trap1").css('top')),parseFloat($("#trap2").css('top')),parseFloat($("#trap3").css('top')),parseFloat($("#trap4").css('top')),parseFloat($("#trap5").css('top'))];
+		maxX=tomX*10/8;
+		maxY=tomY*10/8;
+		
+		setInterval(timer, 100);
+		function timer() {
+			delay-=1;
+			if(delay <0)delay=0;
+			gameTime += 1;			
+		}
+
+		///////
+		//FIN//
+		///////
+		function fin() {
+			gameTime=0;
+			$(".jerry").css('top',maxX/10);
+			$(".jerry").css('left',maxY/10);
+			$(".tom").css('top',maxX/10*8);
+			$(".tom").css('left',maxY/10*8);
+			tomY=maxY/10*8;
+			tomX=maxX/10*8;
+			$(".tom").animate({
+				left: tomX,
+				top: tomY
+			},3, function(){});
+		}
+
+		/////////
+		//jerry//
+		/////////
+		$('.background').mousemove(function(e){
+			jerryX=e.pageX-75;
+			jerryY=e.pageY-75;
+			
+			$(".jerry").stop().animate({
+				left: jerryX,
+				top: jerryY
+			},65, function(){});
+			caught();
+		});
+
+		///////
+		//tom//
+		///////
+		$(document).keydown(function(e){
+			var k=e.key,num;
+			switch(k) {
+				case 'a' : 
+					num=0;
+					break;
+				case 's' : 
+					num=1;
+					break;
+				case 'd' :
+					num=2;
+					break;
+				case 'w' : 
+					num=3;
+					break;
+				default : 
+					num=4;
+					break;
+			}
+			if(delay != 0){
+				num = 4;
+			}
+			tomX+=dirX[num]*v_tom;
+			tomY+=dirY[num]*v_tom;
+			if(tomX>=maxX-120){
+				tomX=maxX-120;
+			}
+			if(tomY>=maxY-120){
+				tomY=maxY-120;
+			}
+			if(tomX<=0){
+				tomX=0;
+			}
+			if(tomY<=0){
+				tomY=0;
+			}
+			for(var i=0;i<5;i++) {
+				if(tx[i]<tomX && tx[i]+100>tomX &&ty[i]<tomY && ty[i]+100>tomY ) {
+					trap1(i);
+				}
+			}
+			$(".tom").stop().animate({
+				left: tomX,
+				top: tomY
+			},30, function(){});
+			caught();
+		});
+		////////
+		//TRAP//
+		////////
+		function trap1(q) {
+			console.log(q);
+			$(".tom").animate({
+				left: tx[q]+40,
+				top: tx[q]+40
+			},1000, function(){});
+			delay=5;
+		}
+
+		//////////
+		//CAUGHT//
+		//////////
+		function caught() {
+			var curTX=parseFloat($(".tom").css('left'));
+			var curTY=parseFloat($(".tom").css('top'));
+			var curJX=parseFloat($(".jerry").css('left'));
+			var curJY=parseFloat($(".jerry").css('top'));
+
+			if((curTX-curJX-35)*(curTX-curJX-35)+(curTY-curJY-35)*(curTY-curJY-35)<=threshold) {
+				alert("제리가 잡혔습니다!!! 버틴시간 : "+gameTime/10+"초");
+				fin();				
+			}
+		}
+	});
+	</script>
+
+
+</body>
+</html>

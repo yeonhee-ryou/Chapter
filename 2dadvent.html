@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		body{
+			color:#FFF;
+			background: #000000;
+		}
+		#screen {
+			margin:0px auto;
+			width:512px;
+		}
+		#map {
+
+			z-index: 1;
+			margin: 10px 0 0;
+		}
+		#map div{
+			float:left;
+
+			width:30px;
+			height:30px;
+			margin:3px;
+			padding:3px;
+			background:#B1B1B1;
+			z-index: 2; 
+		}
+		.Zombie{
+			background:#00FF00!important;
+		}
+		#Player{
+			background: #0000FF!important;
+		}
+	</style>
+	<script src="https://code.jquery.com/jquery.min.js"></script>
+	<script >
+		var maps = new Array(12);
+		for(var i=0;i<12;i++) {
+			maps[i] = new Array(12);
+			for(var j=0;j<12;j++) {
+				maps[i][j]=0;
+			}
+		}
+		var Source = "#map";
+		var Player={
+			x:0,
+			y:0
+
+		};
+		function Zombie(){
+			this.x=0;
+			this.y=0;
+		};
+		var ZombieArray = new Array();
+		var ZombiePointer=0;
+		function spawnMonster(i){
+			ZombieArray.push(new Zombie());
+			console.log("in");
+			while(1){
+
+				ZombieArray[i].x=Math.floor(Math.random()*12);
+				ZombieArray[i].y=Math.floor(Math.random()*12);
+
+				maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+				break;
+			}
+			console.log("out");
+			ZombiePointer++;
+		}
+		function placeEntities(){
+			for(var i=0;i<5;i++) {
+				spawnMonster(i);
+			}
+			Player.x= Math.floor(Math.random()*12);
+			Player.y= Math.floor(Math.random()*12);
+			maps[Player.x][Player.y]=1;
+		};
+		function Block(i,j){
+			this.entity=maps[i][j];
+		};
+		function init(){
+			placeEntities();
+			for(var y=0;y<12;y++) {
+				for(var x=0;x<12;x++) {
+					var block = new Block(x,y);
+					console.log(block.entity);
+					switch(block.entity){
+						case 0:
+							$(Source).append("<div class=\""+(x*100+y)+"\" />");
+							break;
+						case 1:
+							$(Source).append("<div class=\""+(x*100+y)+"\" id = Player />");
+							break;
+						case 2:
+							$(Source).append("<div class=\""+(x*100+y)+" Zombie \"   />");
+							break;
+
+					}
+				}
+			}
+			$("#count").text(ZombieArray.length);
+		}
+		function turn(key){
+			switch(key){
+				case 'w':
+				console.log("a")
+					if(Player.y==0 && maps[Player.x][11]==0) {
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.y=11;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+
+						maps[Player.x][Player.y]=1;
+					} 
+					else if(Player.y>0 && maps[Player.x][Player.y-1]==0) {
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.y--;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+
+						maps[Player.x][Player.y]=1;
+					}
+					break;
+				case 's':
+					if(Player.y==11 && maps[Player.x][0]==0) {
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.y=0;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+
+						maps[Player.x][Player.y]=1;
+					}
+					else if(Player.y<11 && maps[Player.x][Player.y+1]==0){
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.y++;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+						maps[Player.x][Player.y]=1;
+					}
+					break;
+				case 'a':
+					if(Player.x==0 && maps[11][Player.y]==0) {
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.x=11;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+
+						maps[Player.x][Player.y]=1;
+					}
+					else if(Player.x>0 && maps[Player.x-1][Player.y]==0) {
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.x--;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+						maps[Player.x][Player.y]=1;
+					}
+					break;
+				case 'd':
+					if(Player.x==11 && maps[0][Player.y]==0) {
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.x=0;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+
+						maps[Player.x][Player.y]=1;
+					}
+					else if(Player.x<11 && maps[Player.x+1][Player.y]==0) {
+						maps[Player.x][Player.y]=0;
+						$("#Player").attr("id", "");
+
+						Player.x++;
+						$("."+(Player.x*100+Player.y)).attr("id","Player");
+						maps[Player.x][Player.y]=1;
+					}
+			}
+			for(var i=0;i<ZombieArray.length;i++) {
+				var k=Math.random()*2;
+				console.log(ZombieArray);
+				if((k>1 && Player.x != ZombieArray[i].x) || Player.y == ZombieArray[i].y){
+
+					if(ZombieArray[i].x<Player.x) {
+						switch(maps[ZombieArray[i].x+1][ZombieArray[i].y]) {
+							case 0:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].x++;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								break;
+							case 1:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].x++;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								alert("game over");
+						}
+					}
+
+					if(ZombieArray[i].x>Player.x) {
+						switch(maps[ZombieArray[i].x-1][ZombieArray[i].y]) {
+							case 0:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].x--;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								break;
+							case 1:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].x--;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								alert("game over");
+
+						}
+					}
+
+				} else {
+					if(ZombieArray[i].y<Player.y) { 
+						switch(maps[ZombieArray[i].x][ZombieArray[i].y+1]) {
+							case 0:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].y++;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								break;
+							case 1:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].y++;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								alert("game over");
+						}
+					}
+
+					if(ZombieArray[i].y>Player.y){
+						switch( maps[ZombieArray[i].x][ZombieArray[i].y-1]) {
+							case 0:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].y--;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								break;
+							case 1:
+								maps[ZombieArray[i].x][ZombieArray[i].y]=0;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).removeClass("Zombie");
+
+								ZombieArray[i].y--;
+								$("."+(ZombieArray[i].x*100+ZombieArray[i].y)).addClass("Zombie");
+								maps[ZombieArray[i].x][ZombieArray[i].y]=2;
+								alert("game over");
+							}
+					}
+				}
+			}
+			spawnMonster(ZombiePointer);
+			
+			$("#count").text(ZombieArray.length);
+		};
+		$(document).ready(init);
+		$(document).keypress(function(e) {
+			turn(e.key);
+		});
+	</script>
+</head>
+<body>
+<div id="screen">
+	<div id="map"></div>
+	<div id="count">  </div>
+</div>
+</body>
+</html>
