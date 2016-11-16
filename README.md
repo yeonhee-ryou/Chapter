@@ -1,5 +1,10 @@
 # Chapter
 
+##Student
+Minki http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/MinKi.html
+<br />
+2D Adventure http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/2dadvent.html
+
 ## Play
 Picture Memorize Game http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/picture.html 
 <br />
