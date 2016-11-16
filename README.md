@@ -1,16 +1,18 @@
 # Chapter
 
-##Student
-Minki http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/MinKi.html
+## Projects
+Minki: 이재승, 표제우 https://rawgit.com/yeonni/Chapter/master/MinKi/MinKi.html
 <br />
-2D Adventure http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/2dadvent.html
+2D Adventure: 정민 https://rawgit.com/yeonni/Chapter/master/2dadvent.html
 <br />
-Tic Tac Toe http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/TIC-TAC-TOE.html
+Tic Tac Toe: 박수한, 박정우 https://rawgit.com/yeonni/Chapter/master/TIC-TAC-TOE.html
+<br />
+Finding Bomb: 임채현, 최민재, 최제원 https://rawgit.com/yeonni/Chapter/master/bomb.html
 
-## Play
-Picture Memorize Game http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/picture.html 
+## Sample Games
+Picture Memorize Game https://rawgit.com/yeonni/Chapter/master/picture.html
 <br />
-Sliding Puzzle http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/sliding.html
+Sliding Puzzle https://rawgit.com/yeonni/Chapter/master/sliding.html
 
 
 ## W3School Reference
