@@ -5,7 +5,7 @@ Minki http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/maste
 <br />
 2D Adventure http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/2dadvent.html
 <br />
-Tic Tac Toe http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/Tic-Tac-Toe.html
+Tic Tac Toe http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/TIC-TAC-TOE.html
 
 ## Play
 Picture Memorize Game http://htmlpreview.github.io/?https://github.com/yeonni/Chapter/blob/master/picture.html 
