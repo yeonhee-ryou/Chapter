@@ -1,0 +1,213 @@
+<html>
+<head>
+	<title>Finding Bomb</title>
+	<meta charset="utf8">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			font: 18px Verdana;
+			color: #FFF;
+		  	background: #EE872A;
+		}
+		#puzzlebox {
+			margin: 0px auto;
+			width: 530px;
+		}
+		#cards {
+			z-index: 1;
+			margin: 10px 0 0;
+		}
+		#cards div{
+			text-align: center;
+    		display: flex;
+    		justify-content: center;
+    		flex-direction: column;
+			float: left;
+			width: 100px;
+			height: 100px;
+			margin: 5px;
+			padding: 5px;
+		  	background: #B1B1B1;
+			z-index: 2;
+		}
+		#status {
+			text-align: center;
+			margin: 20px;
+			display: block;
+		}
+		#status .button {
+			text-transform: uppercase;
+			background: #EE872A;
+			padding: 5px 10px;
+			margin: 5px;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+		#status .button:hover {
+			background: #999;
+		}
+	</style>
+
+	<script src="https://code.jquery.com/jquery.min.js"></script>
+
+	<script>
+		var Counter = 0;
+		var ImgFound = 0;
+		var Source = "#cards";
+		var CardSet = [];
+
+		function Card(i) {
+			this.value = 0;
+			this.place = i;
+			this.isClicked = 0;
+			this.row = function () { 
+				if (this.place === undefined) {
+					return -1;
+				} else {
+					return Math.floor(this.place / 4);
+				}
+			}
+			this.col = function () { 
+				if (this.place === undefined) {
+					return -1;
+				} else {
+					return this.place % 4;
+				}
+			}
+		}
+
+		function hideBomb(){
+    		var bombLocation = Math.round(Math.random()*15);
+    		var card = getCardAt(bombLocation);
+    		card.value = -1;
+            countbomb();
+		}
+
+		function getCardAt(j) {
+			for (var i = 0; i < CardSet.length; i++) {
+				if (CardSet[i].place === j) return CardSet[i];
+			}
+			return undefined;
+		}
+
+		function getBomb() {
+			for (var i = 0; i < CardSet.length; i++) {
+				if (CardSet[i].value === -1) return CardSet[i];
+			}
+			return undefined;
+		}
+		function countbomb(i){
+			var now = getCardAt(i);
+			var bomb = getBomb();
+			var bombLocation = bomb.place;
+			if (bombLocation - 5 < 0) {
+				
+			}
+			else {
+				CardSet[i-5].value = 1;
+			}
+			if (bombLocation - 4 < 0) {
+				
+			}
+			else {
+				CardSet[i-4] = 1;
+			}
+			if (bombLocation - 3 < 0) {
+				
+			}
+			else {
+				CardSet[i-3] = 1;
+			}
+			if (bombLocation - 1 < 0) {
+				
+			}
+			else {
+				CardSet[i-1] = 1;
+			}
+			if (bombLocation + 1 > 15) {
+				
+			}
+			else {
+				CardSet[i+1] = 1;
+			}
+			if (bombLocation + 3 > 15) {
+				
+			}
+			else {
+				CardSet[i+3] = 1;
+			}
+			if (bombLocation + 4 > 15) {
+				
+			}
+			else {
+				CardSet[i+4] = 1;
+			}
+			if (bombLocation + 5 > 15) {
+				
+			}
+			else {
+				CardSet[i+5] = 1;
+			}
+		}
+
+		function renderCardSet() {
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				if (card.value === 16) {
+					$("#card" + card.place).css("background", "#EE872A");
+					$("#card" + card.place).text("");
+				} else {
+					$("#card" + card.place).css("background", "#B1B1B1");
+					$("#card" + card.place).text("" + card.value);
+				}
+			}
+			$("#counter").html("" + Counter);
+		}
+
+		
+		function resetGame() {
+			hideBomb();
+			renderCardSet();
+			Counter = 0;
+			return false;
+		}
+
+		function init() {	
+			for (var i = 0; i < 16 ; i++) {
+				var card = new Card(i);
+				CardSet.push(card);
+			}
+			for (var i = 0; i < CardSet.length; i++) {
+				var card = CardSet[i];
+				$(Source).append("<div id=card" + card.place + "/>");
+				//$("#card" + card.place).click(countbomb(i));
+			}
+			hideBomb();
+			renderCardSet();
+		}
+
+		$(document).ready(init);
+	</script>
+
+</head>
+
+<body>
+
+<div id="puzzlebox">
+  <span id="status">
+    <span class="button">
+      <span id="counter">0</span>
+      Slides
+    </span>
+    <span class="button">
+      <a onclick="resetGame();">Reset</a>
+    </span> 
+  </span>
+  <div id="cards"></div>
+</div>
+
+</body>
+</html>
